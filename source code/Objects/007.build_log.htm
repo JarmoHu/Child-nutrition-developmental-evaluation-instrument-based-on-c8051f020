@@ -1,0 +1,69 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: ¦ÌVision V5.20.0.39
+Copyright (C) 2016 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Hu Qiaomu, HUHU, LIC=D0MNN-YVT6Y-275RZ-JDPY9-WNZ06-ZRAQP
+ 
+Tool Versions:
+Toolchain:       PK51 Prof. Developers Kit  Version: 9.56.0.0
+Toolchain Path:  C:\Keil_v5\C51\BIN
+C Compiler:      C51.exe V9.56.0.0
+Assembler:       A51.exe V8.2.5.0
+Linker/Locator:  BL51.exe V6.22
+Library Manager: LIB51.exe V4.30.1.0
+Hex Converter:   OH51.exe V2.7.0.0
+CPU DLL:         S8051.DLL V3.106.0.0
+Dialog DLL:      DCYG.DLL V2.74.0.0
+Target DLL:      SiC8051F.dll V4.3.0.0
+Dialog DLL:      TCYG.DLL V2.71.0.0
+ 
+<h2>Project:</h2>
+D:\huqiaomu\Documents\keil project\011\007.uvproj
+Project File Date:  11/15/2017
+
+<h2>Output:</h2>
+Rebuild target 'Target 1'
+compiling main.c...
+compiling keyout.c...
+compiling lcdcontrol.c...
+compiling who.c...
+compiling funcf020.c...
+linking...
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_LCD_DELAY1MS?FUNCF020
+    CALLER1: ?PR?TIMER2?MAIN
+    CALLER2: ?PR?TIMER3?MAIN
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?LIGHTING?FUNCF020
+    CALLER1: ?PR?TIMER3?MAIN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_LCD_DELAY1MS?FUNCF020
+    CALLER1: ?PR?TIMER3?MAIN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_CHRT_DISP?LCDCONTROL
+    CALLER1: ?PR?TIMER2?MAIN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_CHRT_DISP_STR?LCDCONTROL
+    CALLER1: ?PR?TIMER2?MAIN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_STRLEN1?LCDCONTROL
+    CALLER1: ?PR?TIMER2?MAIN
+    CALLER2: ?C_C51STARTUP
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY10MS?FUNCF020
+    CALLER1: ?PR?TIMER0?MAIN
+    CALLER2: ?C_C51STARTUP
+Program Size: data=103.6 xdata=113 code=23093
+creating hex file from ".\Objects\007"...
+".\Objects\007" - 0 Error(s), 7 Warning(s).
+Build Time Elapsed:  00:00:02
+</pre>
+</body>
+</html>

@@ -1,0 +1,7 @@
+".\Objects\main.obj",
+".\Objects\keyout.obj",
+".\Objects\lcdcontrol.obj",
+".\Objects\who.obj",
+".\Objects\funcf020.obj" 
+TO ".\Objects\007" 
+PRINT(".\Listings\007.m51") RAMSIZE(256) 

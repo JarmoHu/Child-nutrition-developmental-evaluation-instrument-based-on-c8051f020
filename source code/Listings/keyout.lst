@@ -1,0 +1,225 @@
+C51 COMPILER V9.56.0.0   KEYOUT                                                            11/23/2017 22:06:07 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE KEYOUT
+OBJECT MODULE PLACED IN .\Objects\keyout.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE keyout.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\ke
+                    -yout.lst) TABS(2) OBJECT(.\Objects\keyout.obj)
+
+line level    source
+
+   1          #include "keyout.h"
+   2          #include "lcdcontrol.h"
+   3          #include "funcf020.h"
+   4          
+   5          void KeySendByte(uchar datt)
+   6          {
+   7   1        uchar a = 0;
+   8   1        KEYSCL = 0;
+   9   1        for (a = 0; a < 8; a++)
+  10   1        {
+  11   2          KEYSDA = datt;
+  12   2          datt = datt >> 1;
+  13   2          Delay10us();
+  14   2          KEYSCL = 1;
+  15   2          Delay10us();
+  16   2          KEYSCL = 0;
+  17   2          Delay10us();
+  18   2        }
+  19   1        KEYSDA = 0;
+  20   1      }
+  21          
+  22          uchar Getkey()
+  23          {
+  24   1        uchar keyword, keyword1, i;
+  25   1      again_key:
+  26   1        P4 = P4 | 0x0f;
+  27   1        KeySendByte(0x00);
+  28   1        Delay10us();
+  29   1        Keywait();
+  30   1      
+  31   1        while (key_wait)
+  32   1          ;
+  33   1      
+  34   1        KeySendByte(0xf8);
+  35   1        for (i = 0; i < 5; i++)
+  36   1        {
+  37   2          KeySendBit(i == 0 ? 0 : 1);
+  38   2          Delay10us();
+  39   2          Lighting(0);
+  40   2          keyword = P4 & 0x000f;
+  41   2          if (keyword != 0x000f)
+  42   2          {
+  43   3            keyword1 = P4;
+  44   3            while ((keyword1 & 0x000f) != 0x000f)
+  45   3            {
+  46   4              Delay10ms();
+  47   4              keyword1 = P4;
+  48   4            }
+  49   3      
+  50   3            return 4 * i + Changeto2(keyword);
+  51   3          }
+  52   2        }
+  53   1        goto again_key;
+  54   1      }
+C51 COMPILER V9.56.0.0   KEYOUT                                                            11/23/2017 22:06:07 PAGE 2   
+
+  55          
+  56          void KeySendBit(uchar num)
+  57          {
+  58   1        KEYSCL = 0;
+  59   1        Delay10us();
+  60   1        KEYSDA = num;
+  61   1        Delay10us();
+  62   1        KEYSCL = 1;
+  63   1        Delay10us();
+  64   1        KEYSCL = 0;
+  65   1        Delay10us();
+  66   1      }
+  67          
+  68          uchar Changeto2(uchar keyword)
+  69          {
+  70   1        switch (keyword)
+  71   1        {
+  72   2        case 0xe:
+  73   2          return 0;
+  74   2          break;
+  75   2        case 0xd:
+  76   2          return 1;
+  77   2          break;
+  78   2        case 0xb:
+  79   2          return 2;
+  80   2          break;
+  81   2        case 0x7:
+  82   2          return 3;
+  83   2          break;
+  84   2        default:
+  85   2          return 20;
+  86   2          break;
+  87   2        }
+  88   1      }
+  89          
+  90          float Get_keynumber(void)
+  91          {
+  92   1        bit dot_number = 0;
+  93   1        uchar numberstr[16];
+  94   1        uchar i = 0, k;
+  95   1        for (i = 0; i < 16; i++)
+  96   1        {
+  97   2          k = Getkey();
+  98   2          switch (k)
+  99   2          {
+ 100   3          case 0:
+ 101   3          case 1:
+ 102   3          case 2:
+ 103   3          case 3:
+ 104   3          case 4:
+ 105   3          case 5:
+ 106   3          case 6:
+ 107   3          case 7:
+ 108   3          case 8:
+ 109   3          case 9:
+ 110   3            numberstr[i] = k | 0x30;
+ 111   3            Wr_lcd(dat, numberstr[i]);
+ 112   3            break;
+ 113   3      
+ 114   3          case 10:
+ 115   3            if (dot_number == 0)
+ 116   3            {
+C51 COMPILER V9.56.0.0   KEYOUT                                                            11/23/2017 22:06:07 PAGE 3   
+
+ 117   4              numberstr[i] = '.';
+ 118   4              Wr_lcd(dat, '.');
+ 119   4              dot_number = 1;
+ 120   4            }
+ 121   3            else
+ 122   3            {
+ 123   4              i--;
+ 124   4            }
+ 125   3            break;
+ 126   3      
+ 127   3          case keynext:
+ 128   3            if (i != 0)
+ 129   3            {
+ 130   4              numberstr[i] = 0x00;
+ 131   4              goto bre;
+ 132   4            }
+ 133   3            else
+ 134   3            {
+ 135   4              i--;
+ 136   4            }
+ 137   3            break;
+ 138   3      
+ 139   3          case keydel:
+ 140   3            if (i != 0)
+ 141   3            {
+ 142   4              i--;
+ 143   4              if (numberstr[i] == '.')
+ 144   4              {
+ 145   5                dot_number = 0;
+ 146   5              }
+ 147   4              Wr_lcd(comm, 0xC0 | i);
+ 148   4              Delay10us();
+ 149   4              Wr_lcd(dat, 0x20);
+ 150   4              Delay10us();
+ 151   4              Wr_lcd(comm, 0xC0 | i);
+ 152   4              i--;
+ 153   4            }
+ 154   3            break;
+ 155   3          }
+ 156   2        }
+ 157   1        numberstr[i] = 0x00;
+ 158   1      bre:
+ 159   1        return Zhuanhua(numberstr);
+ 160   1      }
+ 161          
+ 162          float Zhuanhua(uchar *numberstr)
+ 163          {
+ 164   1        uchar i = 0, len;
+ 165   1        float num = 0, dot = 0.1;
+ 166   1        len = Strlen1(numberstr);
+ 167   1      
+ 168   1        while ((numberstr[i] != '.') && (i < len))
+ 169   1        {
+ 170   2          num = num * 10 + numberstr[i] - '0';
+ 171   2          i++;
+ 172   2        }
+ 173   1      
+ 174   1        i++;
+ 175   1      
+ 176   1        while (i < len)
+ 177   1        {
+ 178   2          num = num + (numberstr[i] - '0') * dot;
+C51 COMPILER V9.56.0.0   KEYOUT                                                            11/23/2017 22:06:07 PAGE 4   
+
+ 179   2          i++;
+ 180   2          dot = dot / 10;
+ 181   2        }
+ 182   1      
+ 183   1        return num;
+ 184   1      }
+ 185          
+ 186          void Keywait(void)
+ 187          {
+ 188   1        TL0 = 0xB0;
+ 189   1        TH0 = 0x3C;
+ 190   1        TR0 = 1;     //开启定时
+ 191   1        key_wait = 1; //置位键盘标志位
+ 192   1        while (key_wait) //等待定时器扫描键盘
+ 193   1          ;
+ 194   1        return;
+ 195   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    626    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      35
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
